@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ocserv_version=0.10.4
+ocserv_version=0.10.5
 version=${1-${ocserv_version}}
 libtasn1_version=4.5
 filename="ocserv-${version}.tar.xz"
