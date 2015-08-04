@@ -2,11 +2,18 @@
 ####################################################
 #                                                  #
 # This is a ocserv installation for CentOS 7       #
-# Version: 1.2.3 20150508                          #
-# Author: Travis Lee                               #
+# Version: 1.2.4 20150804                          #
+# Author: Travis Lee
+# Contributer: adaiguoguo
 # Website: https://www.stunnel.info                #
 #                                                  #
 ####################################################
+
+#  Version: 1.2.4 20150804
+#  *更新ocserv的版本为0.10.5
+#  *删除firewalld保留iptables
+#  *去除所有route规则
+#  *只开通一个C段IP
 
 #  Version: 1.2.3 20150508
 #  *更新libtasn1的版本为4.5
@@ -224,7 +231,7 @@ _EOF_
     sed -i "s/udp-port = 443/udp-port = ${port}/g" "${confdir}/ocserv.conf"
     sed -i "s/default-domain = example.com/#default-domain = example.com/g" "${confdir}/ocserv.conf"
     sed -i "s/ipv4-network = 192.168.1.0/ipv4-network = 192.168.8.0/g" "${confdir}/ocserv.conf"
-    sed -i "s/ipv4-netmask = 255.255.255.0/ipv4-netmask = 255.255.248.0/g" "${confdir}/ocserv.conf"
+    sed -i "s/ipv4-netmask = 255.255.255.0/ipv4-netmask = 255.255.255.0/g" "${confdir}/ocserv.conf"
     sed -i "s/dns = 192.168.1.2/dns = 8.8.8.8\ndns = 8.8.4.4/g" "${confdir}/ocserv.conf"
     sed -i "s/run-as-group = daemon/run-as-group = nobody/g" "${confdir}/ocserv.conf"
     sed -i "s/cookie-timeout = 300/cookie-timeout = 86400/g" "${confdir}/ocserv.conf"
@@ -243,6 +250,7 @@ function InstallIptables {
     yum  remove firewalld -y
     #安装iptables.service
     yum install -y iptables-services
+    systemctl start iptables.service
     systemctl enable iptables.service
 }
 
@@ -251,10 +259,12 @@ function ConfigIptables {
 iptablesisactive=$(systemctl is-active iptables.service)
 
 if [[ ${iptablesisactive} = 'active' ]]; then
+    iptables -F
+    iptables -t nat -X
     iptables -I INPUT -p tcp --dport ${port} -j ACCEPT
     iptables -I INPUT -p udp --dport ${port} -j ACCEPT
-    iptables -A FORWARD -s 192.168.8.0/21 -j ACCEPT
-    iptables -t nat -A POSTROUTING -s 192.168.8.0/21 -o ${eth} -j MASQUERADE
+    iptables -A FORWARD -s 192.168.8.0/24 -j ACCEPT
+    iptables -t nat -A POSTROUTING -s 192.168.8.0/24 -o ${eth} -j MASQUERADE
     service iptables save
 else
     printf "\e[33mWARNING!!! Either firewalld or iptables is NOT Running! \e[0m\n"
