@@ -51,7 +51,7 @@ cd ${basepath}
 
 function ConfigEnvironmentVariable {
     #ocserv版本
-    ocserv_version="0_10_7"
+    ocserv_version="0.10.7"
     version=${1-${ocserv_version}}
     libtasn1_version=4.7
     #变量设置
