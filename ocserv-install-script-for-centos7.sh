@@ -8,9 +8,11 @@
 # Website: https://www.stunnel.info                #
 #                                                  #
 ####################################################
+#  Version: 1.2.7 20151009
+#  *更新ocserv的版本为0.10.9
+
 #  Version: 1.2.6 20150930
 #  *更新libtasn1的版本为4.7
-#  *源码下载改为从 github 下载，作者网站似乎挂了
 
 #  Version: 1.2.5 20150810
 #  *更新ocserv的版本为0.10.7
@@ -51,7 +53,7 @@ cd ${basepath}
 
 function ConfigEnvironmentVariable {
     #ocserv版本
-    ocserv_version="0.10.7"
+    ocserv_version="0.10.9"
     version=${1-${ocserv_version}}
     libtasn1_version=4.7
     #变量设置
